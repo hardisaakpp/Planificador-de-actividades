@@ -1,0 +1,6 @@
+C:\Users\DELL\Desktop\ITI\Cuarto semestre\Módulo 1\Desarrollo de aplicaciones web\proyecto-planificador-de-actividades\Frontend\obj\Debug\net8.0\Frontend.csproj.AssemblyReference.cache
+C:\Users\DELL\Desktop\ITI\Cuarto semestre\Módulo 1\Desarrollo de aplicaciones web\proyecto-planificador-de-actividades\Frontend\obj\Debug\net8.0\Frontend.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\DELL\Desktop\ITI\Cuarto semestre\Módulo 1\Desarrollo de aplicaciones web\proyecto-planificador-de-actividades\Frontend\obj\Debug\net8.0\Frontend.AssemblyInfoInputs.cache
+C:\Users\DELL\Desktop\ITI\Cuarto semestre\Módulo 1\Desarrollo de aplicaciones web\proyecto-planificador-de-actividades\Frontend\obj\Debug\net8.0\Frontend.AssemblyInfo.cs
+C:\Users\DELL\Desktop\ITI\Cuarto semestre\Módulo 1\Desarrollo de aplicaciones web\proyecto-planificador-de-actividades\Frontend\obj\Debug\net8.0\Frontend.csproj.CoreCompileInputs.cache
+C:\Users\DELL\Desktop\ITI\Cuarto semestre\Módulo 1\Desarrollo de aplicaciones web\proyecto-planificador-de-actividades\Frontend\obj\Debug\net8.0\Frontend.MvcApplicationPartsAssemblyInfo.cache

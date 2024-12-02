@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+@using MudBlazor
+
+<MudLayout>
+    <!-- Barra de navegación superior -->
+    <MudAppBar Color="Color.Primary" Elevation="4">
+        <MudText Typo="Typo.h5">Planificador de Actividades</MudText>
+    </MudAppBar>
+
+    <!-- Menú de navegación lateral -->
+    <MudDrawer Open="true" Variant="DrawerVariant.Temporary">
+    <NavMenu />
+</MudDrawer>
+
+
+    <!-- Contenido Principal -->
+    @Body
+</MudLayout>

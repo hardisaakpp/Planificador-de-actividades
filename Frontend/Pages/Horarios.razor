@@ -1,0 +1,98 @@
+@page "/actividades"
+@using MudBlazor
+@using System.Collections.Generic
+@using System.Net.Http.Json
+
+
+@inject HttpClient Http
+
+<PageTitle>Actividades</PageTitle>
+
+<MudContainer>
+    <MudText Typo="Typo.h4" GutterBottom="true">Gestión de Actividades</MudText>
+
+    <!-- Formulario para Crear/Editar -->
+    <MudCard>
+        <MudCardContent>
+            <MudForm @ref="form" OnValidSubmit="GuardarActividad">
+                <MudText Typo="Typo.h6">Nueva Actividad</MudText>
+
+                <MudTextField @bind-Value="nuevaActividad.Nombre" Label="Nombre" Required="true" />
+                <MudTextField @bind-Value="nuevaActividad.Duracion" Label="Duración (minutos)" Required="true" />
+                <MudTextField @bind-Value="nuevaActividad.Prioridad" Label="Prioridad" Required="true" />
+                <MudCheckBox @bind-Checked="nuevaActividad.RequiereLuz" Label="Requiere Luz" />
+
+                <MudButton Type="Submit" Variant="Variant.Filled" Color="Color.Primary">Guardar</MudButton>
+            </MudForm>
+        </MudCardContent>
+    </MudCard>
+
+    <!-- Tabla de Actividades -->
+    <MudTable Items="@actividades">
+        <HeaderContent>
+            <MudTh>Nombre</MudTh>
+            <MudTh>Duración</MudTh>
+            <MudTh>Prioridad</MudTh>
+            <MudTh>Requiere Luz</MudTh>
+            <MudTh>Acciones</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Nombre</MudTd>
+            <MudTd>@context.Duracion</MudTd>
+            <MudTd>@context.Prioridad</MudTd>
+            <MudTd>@context.RequiereLuz</MudTd>
+            <MudTd>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => EditarActividad(context)">
+                    Editar</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => EliminarActividad(context)">
+                    Eliminar</MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+@code {
+    private List<Actividad> actividades = new List<Actividad>();
+    private Actividad nuevaActividad = new Actividad();
+    private MudForm form;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Aquí iría la llamada al servidor para obtener las actividades
+        actividades = await ObtenerActividades();
+    }
+
+    private Task<List<Actividad>> ObtenerActividades()
+    {
+        // Aquí iría la lógica para obtener las actividades del backend
+        return Task.FromResult(new List<Actividad> {
+new Actividad { Nombre = "Actividad 1", Duracion = 60, Prioridad = "Alta", RequiereLuz = true },
+new Actividad { Nombre = "Actividad 2", Duracion = 90, Prioridad = "Media", RequiereLuz = false }
+});
+    }
+
+    private async Task GuardarActividad()
+    {
+        // Lógica para guardar la actividad
+        actividades.Add(nuevaActividad);
+        nuevaActividad = new Actividad();
+    }
+
+    private void EditarActividad(Actividad actividad)
+    {
+        nuevaActividad = actividad;
+    }
+
+    private void EliminarActividad(Actividad actividad)
+    {
+        actividades.Remove(actividad);
+    }
+
+    public class Actividad
+    {
+        public string Nombre { get; set; }
+        public int Duracion { get; set; }
+        public string Prioridad { get; set; }
+        public bool RequiereLuz { get; set; }
+    }
+}

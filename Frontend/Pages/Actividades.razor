@@ -1,0 +1,136 @@
+@page "/tareas"
+@using MudBlazor
+@using Frontend.Shared
+@using System.Net.Http.Json
+
+
+<MudContainer>
+    <h3>Actividades Pendientes</h3>
+    <MudTable Items="tareasPendientes" Hover="true" Striped="true" Bordered="true">
+        <HeaderContent>
+            <MudTh>Nombre</MudTh>
+            <MudTh>Descripción</MudTh>
+            <MudTh>Requiere Electricidad</MudTh>
+            <MudTh>Duración (min)</MudTh>
+            <MudTh>Acciones</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Activity</MudTd>
+            <MudTd>@context.Descripcion</MudTd>
+            <MudTd>@(context.RequiereElectricidad ? "Sí" : "No")</MudTd>
+            <MudTd>@context.DuracionMinutos</MudTd>
+            <MudTd>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => EditTask(context))">Editar
+                </MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@(() => DeleteTask(context.Id))">Eliminar
+                </MudButton>
+                <MudCheckBox T="bool" Label="¿Requiere luz?" />
+ />
+
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddTask">Agregar Tarea</MudButton>
+</MudContainer>
+
+@code {
+    private List<Tarea> tareasPendientes = new();
+    private List<Tarea> tareasRealizadas = new();
+
+    [Inject]
+    private HttpClient Http { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarTareas();
+    }
+
+    private async Task CargarTareas()
+    {
+        // Obtener las actividades pendientes del backend
+        tareasPendientes = await Http.GetFromJsonAsync<List<Tarea>>("api/actividades/pendientes");
+        tareasRealizadas = await Http.GetFromJsonAsync<List<Tarea>>("api/actividades?estado=realizada");
+    }
+
+    private async Task AddTask()
+    {
+        var nuevaTarea = new Tarea
+            {
+                Activity = "Nueva tarea",
+                Descripcion = "Descripción por defecto",
+                RequiereElectricidad = false,
+                DuracionMinutos = 10,
+                Estado = "pendiente"
+            };
+
+        var response = await Http.PostAsJsonAsync("api/actividades", nuevaTarea);
+        if (response.IsSuccessStatusCode)
+        {
+            tareasPendientes.Add(nuevaTarea);
+        }
+    }
+
+    private async Task EditTask(Tarea tarea)
+    {
+        // Enviar la solicitud al backend para actualizar la tarea
+        var response = await Http.PutAsJsonAsync($"api/actividades/{tarea.Id}", tarea);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"Tarea editada: {tarea.Activity}");
+        }
+    }
+
+    private async Task DeleteTask(int id)
+    {
+        // Enviar la solicitud al backend para eliminar la tarea
+        var response = await Http.DeleteAsync($"api/actividades/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            tareasPendientes = tareasPendientes.Where(t => t.Id != id).ToList();
+        }
+    }
+
+    private async Task MarcarComoRealizada(int actividadId)
+    {
+        // Marcar la actividad como realizada en el backend
+        var response = await Http.PostAsJsonAsync("api/actividades/marcarRealizada", actividadId);
+        if (response.IsSuccessStatusCode)
+        {
+            var actividad = tareasPendientes.FirstOrDefault(a => a.Id == actividadId);
+            if (actividad != null)
+            {
+                actividad.Estado = "realizada";
+                actividad.EstadoBool = true; // Asegurarse de que el checkbox refleje el estado correcto
+                tareasPendientes.Remove(actividad);
+                tareasRealizadas.Add(actividad);
+            }
+        }
+    }
+
+    public class Tarea
+    {
+        public int Id { get; set; }
+        public string Activity { get; set; }
+        public string Descripcion { get; set; }
+        public bool RequiereElectricidad { get; set; }
+        public int DuracionMinutos { get; set; }
+        public string Estado { get; set; } = "pendiente";
+
+        // Corregir EstadoBool para tener un setter y poder ser modificado
+        public bool EstadoBool
+        {
+            get => Estado == "realizada";
+            set
+            {
+                if (value)
+                {
+                    Estado = "realizada";
+                }
+                else
+                {
+                    Estado = "pendiente";
+                }
+            }
+        }
+    }
+}
